@@ -1,0 +1,36 @@
+{
+  "name": "maxquebral/laravel-doctrine-factory-generator",
+  "description": "Doctrine entity factory generator for testing",
+  "keywords": [
+    "laravel",
+    "doctrine",
+    "entity",
+    "factory"
+  ],
+  "license": "MIT",
+  "require": {
+    "illuminate/support": "^5.8",
+    "illuminate/filesystem": "^5.8",
+    "illuminate/console": "^5.8"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^8.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "MaxQuebral\\LaravelDoctrineFactory\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "MaxQuebral\\LaravelDoctrineFactory\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "MaxQuebral\\LaravelDoctrineFactory\\FactoryGeneratorServiceProvider"
+      ]
+    }
+  }
+}
