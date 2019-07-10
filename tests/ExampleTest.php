@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace MaxQuebral\LaravelDoctrineFactory\Tests;
 
+use Illuminate\Foundation\Application;
+
 final class ExampleTest extends TestCase
 {
     /**
@@ -12,6 +14,7 @@ final class ExampleTest extends TestCase
      */
     public function testTest(): void
     {
+        // $this->getConsole()->call('route:list');
         self::assertTrue(true);
     }
 }
