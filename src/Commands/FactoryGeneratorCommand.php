@@ -2,19 +2,23 @@
 
 namespace MaxQuebral\LaravelDoctrineFactory\Commands;
 
-use Composer\Composer;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Faker\Generator;
 use Illuminate\Console\Command;
-use Illuminate\Contracts\Config\Repository as LaravelConfig;
 use Illuminate\Filesystem\Filesystem;
 use LaravelDoctrine\ORM\Testing\Factory;
-use ReflectionClass;
 use RuntimeException;
 
 class FactoryGeneratorCommand extends Command
 {
+    /**
+     * Change this to true to check if factory is already defined.
+     *
+     * @var bool
+     */
+    public const VALIDATE_FACTORY = false;
+
     /**
      * The console command description.
      *
@@ -27,7 +31,12 @@ class FactoryGeneratorCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'doctrine:generate:test-factories';
+    protected $signature = 'doctrine:generate:test-factories {entity}';
+
+    /**
+     * @var \LaravelDoctrine\ORM\Testing\Factory
+     */
+    private $factory;
 
     /**
      * @var \Faker\Generator
@@ -35,13 +44,22 @@ class FactoryGeneratorCommand extends Command
     private $faker;
 
     /**
+     * @var \Illuminate\Filesystem\Filesystem
+     */
+    private $filesystem;
+
+    /**
      * Create a new command instance.
      *
      * @param \Faker\Generator $faker
+     * @param \Illuminate\Filesystem\Filesystem $filesystem
+     * @param \LaravelDoctrine\ORM\Testing\Factory $factory
      */
-    public function __construct(Generator $faker)
+    public function __construct(Generator $faker, Filesystem $filesystem, Factory $factory)
     {
         $this->faker = $faker;
+        $this->filesystem = $filesystem;
+        $this->factory = $factory;
 
         parent::__construct();
     }
@@ -49,102 +67,115 @@ class FactoryGeneratorCommand extends Command
     /**
      * Execute the console command.
      *
-     * @param \Illuminate\Contracts\Config\Repository $config
-     * @param \Illuminate\Filesystem\Filesystem $filesystem
-     * @param \LaravelDoctrine\ORM\Testing\Factory $factory
+     * @param \Doctrine\ORM\EntityManagerInterface $entityManager
      *
      * @return mixed
      *
-     * @throws \ReflectionException
+     * @throws \Exception
      */
-    public function handle(
-        LaravelConfig $config,
-        Filesystem $filesystem,
-        Factory $factory,
-        EntityManagerInterface $entityManager
-    ) {
-        // Create a factory based on entity properties.
-        // php artisan doctrine:generate:test-factories --entity=App\Database\Entities\User --force
-        // 1. Check if factory already exist/created for an entity. (--force?)
-        // 2.
-
-        $paths = $config->get('doctrine.managers.default.paths');
-
-        // Get all entities
-        $files = $filesystem->allFiles($paths[0]);
-
-        foreach ($files as $file) {
-            /** @var \Symfony\Component\Finder\SplFileInfo $file */
-            $entityClass = 'App\\Database\\Entities\\' . $file->getBasename('.php');
-
-            // Validate if not FORCED to generate...
-            // $this->validateFactory($entityClass, $factory);
-
-            // Begin here...
-            $this->comment(\sprintf('-> %s', $entityClass));
-
-            // $reflection = new ReflectionClass($entityClass);
-            // foreach ($reflection->getProperties() as $property) {
-            //     dump($property->getDocComment());
-            // }
-
-            $metadata = $entityManager->getClassMetadata($entityClass);
-            $fields = $metadata->getFieldNames();
-
-            $data = $this->createDataArray($fields, $metadata);
-        }
-
-        dd($data);
-    }
-
-    /**
-     * Add data to the fields of the entity.
-     *
-     * @param array $fields
-     *
-     * @return mixed[]
-     */
-    private function createDataArray(array $fields, ClassMetadata $classMetadata): array
+    public function handle(EntityManagerInterface $entityManager)
     {
+        $entity = $this->argument('entity');
+
+        $this->validateFactory($entity);
+
+        $this->comment(\sprintf('-> %s', $entity));
+
+        $metadata = $entityManager->getClassMetadata($entity);
+
         $data = [];
-        foreach ($fields as $field) {
-            $data[$field] =  $this->getPropertyValue($field, $classMetadata->getTypeOfField($field));
-        }
-
-        return $data;
-    }
-
-    /**
-     * Get value using faker.
-     *
-     * @param string $fieldName
-     * @param $type
-     *
-     * @return mixed
-     */
-    private function getPropertyValue(string $fieldName, $type)
-    {
-        if (is_string($type) === true) {
-            if ($fieldName === 'email') {
-                return $this->faker->email;
+        foreach ($metadata->fieldMappings as $fieldMapping) {
+            if ($fieldMapping['id'] ?? false === true) {
+                continue;
             }
 
-            return $this->faker->word;
+            $data[$fieldMapping['fieldName']] = $this->createFaker($fieldMapping);
         }
 
-        return null;
+        $this->createFactoryFile($metadata, $data);
+    }
+
+    /**
+     * Create the factory file.
+     *
+     * @param \Doctrine\ORM\Mapping\ClassMetadata $metadata
+     * @param array $data
+     *
+     * @return void
+     *
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
+    private function createFactoryFile(ClassMetadata $metadata, array $data): void
+    {
+        $path = __DIR__ . '/../factory-template';
+        $template = $this->filesystem->get($path);
+
+        $template = \str_replace(
+            ['{entity}', '{data}', '\'{', '}\''],
+            [\sprintf('%s::class', $metadata->getName()), var_export($data, true), '', ''],
+            $template
+        );
+
+        $filename = \sprintf('%sFactory.php', $metadata->getReflectionClass()->getShortName());
+
+        $newTemplatePath = __DIR__ . '/../../tests/Database/Factories/' . $filename;
+        $this->filesystem->put($newTemplatePath, $template);
+    }
+
+    /**
+     * Create faker method.
+     *
+     * @param mixed[] $field
+     *
+     * @return string
+     * @throws \Exception
+     */
+    private function createFaker(array $field): string
+    {
+        $length = $field['length'] ?? 0;
+
+        // String
+        if ($field['type'] === 'string') {
+            if ($field['fieldName'] === 'email') {
+                return '{$faker->unique(true)->email}';
+            }
+
+            if ($length > 0) {
+                return \sprintf('{$faker->text(%d)}', $this->faker->numberBetween(5, $length));
+            }
+
+            return '{$faker->text(100)}';
+        }
+
+        // Int
+        if ($field['type'] === 'integer') {
+            // Default number of digits.
+            $len = 4;
+
+            if ($length > 0) {
+                return \sprintf('{$faker->numberBetween(1, %d)}', $this->faker->randomNumber($length));
+            }
+
+            return \sprintf('{$faker->randomNumber(%d)}', $len);
+        }
+
+        // Boolean
+        if ($field['type'] === 'boolean') {
+            return '{$faker->boolean}';
+        }
+
+        return '{null}';
     }
 
     /**
      * Check if factory already exist/created for an entity.
      *
      * @param string $entityClass
-     * @param \LaravelDoctrine\ORM\Testing\Factory $factory
      */
-    private function validateFactory(string $entityClass, Factory $factory): void
+    private function validateFactory(string $entityClass): void
     {
-        if ($factory->offsetExists($entityClass) === true) {
-            throw new RuntimeException(\sprintf('%s factory already exist', $entityClass));
+        if (self::VALIDATE_FACTORY === true && $this->factory->offsetExists($entityClass) === true) {
+            throw new RuntimeException(\sprintf('%sFactory already exist', $entityClass));
         }
     }
 }
