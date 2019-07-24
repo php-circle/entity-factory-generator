@@ -1,0 +1,10 @@
+<?php
+declare(strict_types=1);
+
+/** @var \LaravelDoctrine\ORM\Testing\Factory $factory */
+
+use Faker\Generator;
+
+$factory->define({entity}, static function (Generator $faker): array {
+    return {data};
+});
