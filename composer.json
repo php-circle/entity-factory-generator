@@ -1,6 +1,12 @@
 {
   "name": "maxquebral/laravel-doctrine-factory-generator",
   "description": "Doctrine entity factory generator for testing",
+  "authors": [
+    {
+      "name": "Max Quebral",
+      "email": "maxquebral@gmail.com"
+    }
+  ],
   "keywords": [
     "laravel",
     "doctrine",
