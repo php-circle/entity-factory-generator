@@ -79,7 +79,7 @@ class FactoryGeneratorCommand extends Command
 
         $this->validateFactory($entity);
 
-        $this->comment(\sprintf('-> %s', $entity));
+        $this->output->title(\sprintf('-> %s', $entity));
 
         $metadata = $entityManager->getClassMetadata($entity);
 
@@ -93,6 +93,8 @@ class FactoryGeneratorCommand extends Command
         }
 
         $this->createFactoryFile($metadata, $data);
+
+        return 0;
     }
 
     /**
@@ -108,7 +110,8 @@ class FactoryGeneratorCommand extends Command
     private function createFactoryFile(ClassMetadata $metadata, array $data): void
     {
         $path = __DIR__ . '/../factory-template';
-        $template = $this->filesystem->get($path);
+
+        $template = $this->filesystem->get(\realpath($path));
 
         $template = \str_replace(
             ['{entity}', '{data}', '\'{', '}\''],
@@ -118,8 +121,8 @@ class FactoryGeneratorCommand extends Command
 
         $filename = \sprintf('%sFactory.php', $metadata->getReflectionClass()->getShortName());
 
-        $newTemplatePath = __DIR__ . '/../../tests/Database/Factories/' . $filename;
-        $this->filesystem->put($newTemplatePath, $template);
+        $newFactory = __DIR__ . '/../../tests/Database/Factories/' . $filename;
+        $this->filesystem->put($newFactory, $template);
     }
 
     /**
@@ -128,6 +131,7 @@ class FactoryGeneratorCommand extends Command
      * @param mixed[] $field
      *
      * @return string
+     *
      * @throws \Exception
      */
     private function createFaker(array $field): string

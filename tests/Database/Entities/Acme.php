@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity()
  */
-class User
+class Acme
 {
     /**
      * @ORM\Column(name="`active`", type="boolean")
@@ -18,11 +18,25 @@ class User
     protected $active = false;
 
     /**
+     * @ORM\Column(name="address", type="string")
+     *
+     * @var string
+     */
+    protected $address;
+
+    /**
      * @ORM\Column(name="age", type="integer", length=2, options={"unsigned": true})
      *
      * @var bool
      */
     protected $age;
+
+    /**
+     * @ORM\Column(name="created_at", type="datetime")
+     *
+     * @var \DateTime
+     */
+    protected $createdAt;
 
     /**
      * @ORM\Column(name="email", type="string", unique=true)
@@ -37,6 +51,13 @@ class User
      * @var string
      */
     protected $name;
+
+    /**
+     * @ORM\Column(name="random_number", type="integer")
+     *
+     * @var string
+     */
+    protected $randomNumber;
 
     /**
      * @ORM\Id()
