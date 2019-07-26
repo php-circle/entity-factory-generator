@@ -68,13 +68,17 @@ final class FactoryGeneratorCommandTest extends TestCase
                     ->once()->withAnyArgs()->andReturnNull();
             }
         );
+
+
         $this->addCommandInput(
             'getArgument',
             'entity',
             $entity
         );
 
-        $this->addCommandOutput('title', \sprintf('-> %s', $entity));
+        // $this->addCommandOutput('title', \sprintf('-> %s', $entity));
+        $this->consoleOutput->shouldReceive('title')->once()->withAnyArgs()->andReturnNull();
+        $this->consoleOutput->shouldReceive('text')->once()->withAnyArgs()->andReturnNull();
 
         $command = new FactoryGeneratorCommand(
             $faker,

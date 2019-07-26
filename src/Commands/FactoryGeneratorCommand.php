@@ -80,7 +80,7 @@ class FactoryGeneratorCommand extends Command
 
         $this->validateFactory($entity);
 
-        $this->output->title(\sprintf('-> %s', $entity));
+        $this->output->title(\sprintf('Entity %s', $entity));
 
         $metadata = $entityManager->getClassMetadata($entity);
 
@@ -90,6 +90,7 @@ class FactoryGeneratorCommand extends Command
                 continue;
             }
 
+            $this->output->text(\sprintf('-> %s : %s', $fieldMapping['fieldName'], $fieldMapping['type']));
             $data[$fieldMapping['fieldName']] = $this->createFaker($fieldMapping);
         }
 
