@@ -1,1 +1,2 @@
-tests/Database/Factories/
+tests/AppEnv/database/factories
+.phpunit.result.cache

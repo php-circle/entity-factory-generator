@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace MaxQuebral\LaravelDoctrineFactory\Commands;
 
@@ -121,7 +122,7 @@ class FactoryGeneratorCommand extends Command
 
         $filename = \sprintf('%sFactory.php', $metadata->getReflectionClass()->getShortName());
 
-        $newFactory = __DIR__ . '/../../tests/Database/Factories/' . $filename;
+        $newFactory = \database_path('factories/') . $filename;
         $this->filesystem->put($newFactory, $template);
     }
 

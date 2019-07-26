@@ -80,7 +80,7 @@ abstract class TestCase extends PHPUnitTestCase
             return $this->app;
         }
 
-        $app = new Application(__DIR__);
+        $app = new Application(__DIR__ . '/AppEnv');
 
         $app->register(ConsoleServiceProvider::class);
         $app->register(DoctrineServiceProvider::class);

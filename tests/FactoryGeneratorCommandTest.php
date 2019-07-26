@@ -39,6 +39,7 @@ final class FactoryGeneratorCommandTest extends TestCase
      * Should generate factory successfully.
      *
      * @return void
+     *
      * @throws \Exception
      */
     public function testHandleSuccess(): void
