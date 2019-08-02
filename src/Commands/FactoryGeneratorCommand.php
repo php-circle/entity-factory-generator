@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace MaxQuebral\LaravelDoctrineFactory\Commands;
+namespace PhpCircle\FactoryGenerator\Commands;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;

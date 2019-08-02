@@ -28,18 +28,18 @@
   },
   "autoload": {
     "psr-4": {
-      "MaxQuebral\\LaravelDoctrineFactory\\": "src/"
+      "PhpCircle\\FactoryGenerator\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "MaxQuebral\\LaravelDoctrineFactory\\Tests\\": "tests/"
+      "Tests\\PhpCircle\\FactoryGenerator\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "MaxQuebral\\LaravelDoctrineFactory\\FactoryGeneratorServiceProvider"
+        "PhpCircle\\FactoryGenerator\\FactoryGeneratorServiceProvider"
       ]
     }
   }

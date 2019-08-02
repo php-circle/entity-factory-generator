@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace MaxQuebral\LaravelDoctrineFactory\Tests;
+namespace Tests\PhpCircle\FactoryGenerator;
 
 use Closure;
 use Illuminate\Contracts\Console\Kernel as KernelContract;
@@ -11,7 +11,7 @@ use Laravel\Lumen\Console\ConsoleServiceProvider;
 use Laravel\Lumen\Console\Kernel;
 use Laravel\Lumen\Exceptions\Handler;
 use LaravelDoctrine\ORM\DoctrineServiceProvider;
-use MaxQuebral\LaravelDoctrineFactory\FactoryGeneratorServiceProvider;
+use PhpCircle\FactoryGenerator\FactoryGeneratorServiceProvider;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 use ReflectionClass;
