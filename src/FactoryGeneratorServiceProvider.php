@@ -1,9 +1,9 @@
 <?php
 
-namespace MaxQuebral\LaravelDoctrineFactory;
+namespace PhpCircle\FactoryGenerator;
 
 use Illuminate\Support\ServiceProvider;
-use MaxQuebral\LaravelDoctrineFactory\Commands\FactoryGeneratorCommand;
+use PhpCircle\FactoryGenerator\Commands\FactoryGeneratorCommand;
 
 class FactoryGeneratorServiceProvider extends ServiceProvider
 {
@@ -14,20 +14,10 @@ class FactoryGeneratorServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('cmd.factory.generator', function ($app) {
+        $this->app->singleton('cmd.factory.generator', static function ($app) {
             return $app[FactoryGeneratorCommand::class];
         });
 
         $this->commands('cmd.factory.generator');
-    }
-
-    /**
-     * Bootstrap services.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        //
     }
 }
