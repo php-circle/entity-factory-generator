@@ -1,6 +1,6 @@
 {
-  "name": "maxquebral/laravel-doctrine-factory-generator",
-  "description": "Doctrine entity factory generator for testing",
+  "name": "php-circle/entity-factory-generator",
+  "description": "Doctrine entity factory generator for test data",
   "authors": [
     {
       "name": "Max Quebral",
