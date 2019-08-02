@@ -1,20 +1,21 @@
 <?php
 declare(strict_types=1);
 
-namespace MaxQuebral\LaravelDoctrineFactory\Tests;
+namespace Tests\PhpCircle\FactoryGenerator\Commands;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Illuminate\Filesystem\Filesystem;
 use LaravelDoctrine\ORM\Testing\Factory;
-use MaxQuebral\LaravelDoctrineFactory\Commands\FactoryGeneratorCommand;
-use MaxQuebral\LaravelDoctrineFactory\Tests\Database\Entities\Acme;
+use PhpCircle\FactoryGenerator\Commands\FactoryGeneratorCommand;
+use Tests\PhpCircle\FactoryGenerator\Database\Entities\Acme;
 use Mockery\MockInterface;
 use Faker\Factory as FakerFactory;
+use Tests\PhpCircle\FactoryGenerator\TestCase;
 
 /**
  * Class FactoryGeneratorCommandTest
  *
- * @covers \MaxQuebral\LaravelDoctrineFactory\Commands\FactoryGeneratorCommand
+ * @covers \PhpCircle\FactoryGenerator\Commands\FactoryGeneratorCommand
  *
  * @package MaxQuebral\LaravelDoctrineFactory\Tests
  */
@@ -54,7 +55,7 @@ final class FactoryGeneratorCommandTest extends TestCase
         /** @var \Doctrine\ORM\EntityManagerInterface $entityManager */
         $entityManager = \app('em');
 
-        $factoryTemplate = __DIR__ . '/../src/factory-template';
+        $factoryTemplate = __DIR__ . '/../../src/factory-template';
 
         /** @var \Illuminate\Filesystem\Filesystem $filesystem */
         $filesystem = $this->mock(
@@ -68,7 +69,6 @@ final class FactoryGeneratorCommandTest extends TestCase
                     ->once()->withAnyArgs()->andReturnNull();
             }
         );
-
 
         $this->addCommandInput(
             'getArgument',

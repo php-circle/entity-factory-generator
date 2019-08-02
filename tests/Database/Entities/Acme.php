@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace MaxQuebral\LaravelDoctrineFactory\Tests\Database\Entities;
+namespace Tests\PhpCircle\FactoryGenerator\Database\Entities;
 
 use Doctrine\ORM\Mapping as ORM;
 
