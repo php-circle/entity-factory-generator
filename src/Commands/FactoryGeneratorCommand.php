@@ -25,14 +25,14 @@ class FactoryGeneratorCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Generate entity test factory used for testing';
+    protected $description = 'Generate entity factory for testing';
 
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'doctrine:generate:test-factories {entity}';
+    protected $signature = 'doctrine:generate:entity:factory {entity}';
 
     /**
      * @var \LaravelDoctrine\ORM\Testing\Factory
