@@ -10,7 +10,7 @@ To generate an entity factory run the artisan command:
 ```
 php artisan doctrine:generate:entities:factory "App\Database\Entities\User"
 ```
-####Factory Result
+#### Factory Result
 Actual result is `array()`, but you can to format to `[]`.
 ```
 $factory->define(App\Database\Entities\Acme::class, static function (Generator $faker): array {
@@ -24,5 +24,5 @@ $factory->define(App\Database\Entities\Acme::class, static function (Generator $
 });
 ```
 
-####License
+#### License
 The Laravel Doctrine Factory Generator is free software licensed under the MIT license.
