@@ -11,6 +11,7 @@ To generate an entity factory run the artisan command:
 php artisan doctrine:generate:entities:factory "App\Database\Entities\User"
 ```
 ####Factory Result
+Actual result is `array()`, but you can to format to `[]`.
 ```
 $factory->define(App\Database\Entities\Acme::class, static function (Generator $faker): array {
     return [
