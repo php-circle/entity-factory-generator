@@ -11,6 +11,7 @@ use Laravel\Lumen\Console\ConsoleServiceProvider;
 use Laravel\Lumen\Console\Kernel;
 use Laravel\Lumen\Exceptions\Handler;
 use LaravelDoctrine\ORM\DoctrineServiceProvider;
+use Mockery;
 use PhpCircle\FactoryGenerator\FactoryGeneratorServiceProvider;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;
@@ -182,5 +183,19 @@ abstract class TestCase extends PHPUnitTestCase
 
         $this->consoleInput = $this->mock(InputInterface::class);
         $this->consoleOutput = $this->mock(OutputInterface::class);
+    }
+
+    /**
+     * This method is called after each test.
+     *
+     * @return void
+     */
+    protected function tearDown(): void
+    {
+        if (class_exists('Mockery')) {
+            Mockery::close();
+        }
+
+        parent::tearDown();
     }
 }

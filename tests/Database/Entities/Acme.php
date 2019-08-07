@@ -32,6 +32,13 @@ class Acme
     protected $age;
 
     /**
+     * @ORM\Column(name="`average`", type="float")
+     *
+     * @var string
+     */
+    protected $average;
+
+    /**
      * @ORM\Column(name="created_at", type="datetime")
      *
      * @var \DateTime
