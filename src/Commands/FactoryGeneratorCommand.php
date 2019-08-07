@@ -14,13 +14,6 @@ use RuntimeException;
 class FactoryGeneratorCommand extends Command
 {
     /**
-     * Change this to true to check if factory is already defined.
-     *
-     * @var bool
-     */
-    public const VALIDATE_FACTORY = false;
-
-    /**
      * The console command description.
      *
      * @var string
@@ -32,7 +25,9 @@ class FactoryGeneratorCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'doctrine:generate:entity:factory {entity}';
+    protected $signature = 'doctrine:generate:entity:factory 
+    {entity} 
+    {--f|force : Force generation of factory. (Delete if exist)}';
 
     /**
      * @var \LaravelDoctrine\ORM\Testing\Factory
@@ -77,8 +72,11 @@ class FactoryGeneratorCommand extends Command
     public function handle(EntityManagerInterface $entityManager)
     {
         $entity = $this->argument('entity');
+        $force = $this->option('force');
 
-        $this->validateFactory($entity);
+        if ($force === false) {
+            $this->validateFactory($entity);
+        }
 
         $this->output->title(\sprintf('Entity %s', $entity));
 
@@ -170,6 +168,11 @@ class FactoryGeneratorCommand extends Command
             return '{$faker->boolean}';
         }
 
+        // Datetime
+        if ($field['type'] === 'datetime') {
+            return '{$faker->datetime}';
+        }
+
         return '{null}';
     }
 
@@ -180,7 +183,7 @@ class FactoryGeneratorCommand extends Command
      */
     private function validateFactory(string $entityClass): void
     {
-        if (self::VALIDATE_FACTORY === true && $this->factory->offsetExists($entityClass) === true) {
+        if ($this->factory->offsetExists($entityClass) === true) {
             throw new RuntimeException(\sprintf('%sFactory already exist', $entityClass));
         }
     }
