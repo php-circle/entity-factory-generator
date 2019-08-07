@@ -141,39 +141,23 @@ class FactoryGeneratorCommand extends Command
         // String
         if ($field['type'] === 'string') {
             if ($field['fieldName'] === 'email') {
-                return '{$faker->unique(true)->email}';
+                return MappingInterface::TYPES['email'];
             }
 
             if ($length > 0) {
                 return \sprintf('{$faker->text(%d)}', $this->faker->numberBetween(5, $length));
             }
-
-            return '{$faker->text(100)}';
         }
 
-        // Int
-        if ($field['type'] === 'integer') {
-            // Default number of digits.
-            $len = 4;
-
-            if ($length > 0) {
-                return \sprintf('{$faker->numberBetween(1, %d)}', $this->faker->randomNumber($length));
-            }
-
-            return \sprintf('{$faker->randomNumber(%d)}', $len);
+        if ($field['type'] === 'integer' && $length > 0) {
+            return \sprintf('{$faker->numberBetween(1, %d)}', $this->faker->randomNumber($length));
         }
 
-        // Boolean
-        if ($field['type'] === 'boolean') {
-            return '{$faker->boolean}';
+        if (\array_key_exists($field['type'], MappingInterface::TYPES) === true) {
+            return MappingInterface::TYPES[$field['type']];
         }
 
-        // Datetime
-        if ($field['type'] === 'datetime') {
-            return '{$faker->datetime}';
-        }
-
-        return '{null}';
+        return \sprintf('{null /** %s */}', $field['type']);
     }
 
     /**
