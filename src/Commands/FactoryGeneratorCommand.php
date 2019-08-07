@@ -144,20 +144,34 @@ class FactoryGeneratorCommand extends Command
                 return MappingInterface::TYPES['email'];
             }
 
+            // Defined length
             if ($length > 0) {
                 return \sprintf('{$faker->text(%d)}', $this->faker->numberBetween(5, $length));
             }
         }
 
+        // Integer with defined length
         if ($field['type'] === 'integer' && $length > 0) {
             return \sprintf('{$faker->numberBetween(1, %d)}', $this->faker->randomNumber($length));
         }
 
-        if (\array_key_exists($field['type'], MappingInterface::TYPES) === true) {
-            return MappingInterface::TYPES[$field['type']];
+        return $this->getMapping($field['type']);
+    }
+
+    /**
+     * Get type from the defined mappings.
+     *
+     * @param string $type
+     *
+     * @return string
+     */
+    private function getMapping(string $type): string
+    {
+        if (\array_key_exists($type, MappingInterface::TYPES) === true) {
+            return MappingInterface::TYPES[$type];
         }
 
-        return \sprintf('{null /** %s */}', $field['type']);
+        return \sprintf('{null /** %s */}', $type);
     }
 
     /**
@@ -168,7 +182,9 @@ class FactoryGeneratorCommand extends Command
     private function validateFactory(string $entityClass): void
     {
         if ($this->factory->offsetExists($entityClass) === true) {
-            throw new RuntimeException(\sprintf('%sFactory already exist', $entityClass));
+            throw new RuntimeException(
+                \sprintf('%sFactory already exist. Add -f or --force to regenerate.', $entityClass)
+            );
         }
     }
 }
